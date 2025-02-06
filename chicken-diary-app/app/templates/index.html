@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <titleチキンダイヤリー - デジタル日記帳</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+</head>
+<body>
+    <div id="index" class="container">
+        <h1>チキンダイヤリー</h1>
+        <p class="sub-title">〜 あなたの大切な思い出を残そう 〜</p>
+
+        <div class="search-container">
+            <form action="{{ url_for('index') }}" method="GET" class="search-form">
+                <div class="search-input-group">
+                    <input type="text" 
+                           name="tag" 
+                           placeholder="タグで検索..." 
+                           value="{{ request.args.get('tag', '') }}"
+                           class="search-input">
+                    <button type="submit" class="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+            {% if request.args.get('tag') %}
+            <div class="current-search">
+                <span>検索中: {{ request.args.get('tag') }}</span>
+                <a href="{{ url_for('index') }}" class="clear-search">
+                    <i class="fas fa-times"></i>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <a href="{{ url_for('create_diary') }}" class="button">
+            <i class="fas fa-pencil-alt"></i> 新しい日記を書く
+        </a>
+
+        <div class="diaries">
+            <h2 class="title-border">思い出の記録</h2>
+            {% if not diaries %}
+                {% if request.args.get('tag') %}
+                <p>検索結果がありません。</p>
+                {% else %}
+                <p>まだ日記がありません。今日の出来事を記録してみましょう！</p>
+                {% endif %}
+            {% endif %}
+ 
+            <ul>
+                {% for diary in diaries %}
+                <li class="card">
+                    <div class="diary-content">
+                        <a href="{{ url_for('view_diary', diary_id=diary.id) }}" class="diary-title">
+                            {{ diary.title }}
+                        </a>
+                        <p class="small">作成日: {{ diary.created_at.strftime('%Y年 %m月 %d日 %H:%M') }}</p>
+                        {% if diary.tags %}
+                        <div class="tags">
+                            {% for tag in diary.tags.split(',') %}
+                            <a href="{{ url_for('index', tag=tag.strip()) }}" class="tag">
+                                <i class="fas fa-tag"></i>
+                                {{ tag.strip() }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

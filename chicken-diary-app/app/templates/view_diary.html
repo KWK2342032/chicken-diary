@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>チキンダイヤリー - {{ diary.title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/view_diary.css') }}">
+</head>
+<body>
+    <div id="view_diary" class="container">
+        <h1 class="title-border">{{ diary.title }}</h1>
+
+        <div class="contents">
+            {% if diary.image_path %}
+            <div class="diary-image">
+                <img src="{{ url_for('static', filename='uploads/' + diary.image_path) }}" 
+                     alt="日記の画像" 
+                     class="uploaded-image">
+            </div>
+            {% endif %}
+            
+            <p class="diary-content">{{ diary.content }}</p>
+            {% if diary.tags %}
+            <div class="tags">
+                {% for tag in diary.tags.split(',') %}
+                <a href="{{ url_for('index', tag=tag.strip()) }}" class="tag">{{ tag.strip() }}</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <p class="small">作成日: {{ diary.created_at.strftime('%Y年 %m月 %d日 %H:%M') }}</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('delete_diary', diary_id=diary.id) }}">
+            <button type="submit" class="delete button">日記を削除</button>
+        </form>
+
+        <a href="{{ url_for('index') }}" class="button">日記一覧に戻る</a>
+    </div>
+</body>
+</html>
