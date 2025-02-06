@@ -19,13 +19,13 @@ class Diary(db.Model):
         db.String(100),
         nullable=False,
         index=True,
-        comment='メモのタイトル'
+        comment='日記のタイトル'
     )
     
     content = db.Column(
         db.Text,
         nullable=False,
-        comment='メモの本文'
+        comment='日記の本文'
     )
     
     image_path = db.Column(
